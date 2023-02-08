@@ -8,11 +8,12 @@ import { getCongratsSmile, isTodayEven, sleep, toFarsiNumber } from "./utils";
 const token = config.get("token");
 process.env["NTBA_FIX_350"] = "1";
 const bot = new TelegramBot(token, { polling: true });
+console.log("Bot started");
 
 // Matches "/sport"
 bot.onText(/\/sport(.*)/, async (msg, match) => {
-  console.log(`Sport program started at ${new Date()}`);
   const chatId = msg.chat.id;
+  console.log(`${chatId}: Sport program started at ${new Date()}`);
   bot.sendMessage(chatId, "شروع برنامه ورزشی");
   for (const sport of sports) {
     bot.sendMessage(chatId, toFarsiNumber(`${sport.time} دقیقه ${sport.title}`));
@@ -24,7 +25,7 @@ bot.onText(/\/sport(.*)/, async (msg, match) => {
   }
   bot.sendMessage(chatId, "پایان برنامه ورزشی");
   bot.sendMessage(chatId, getCongratsSmile());
-  console.log(`Sport program ended at ${new Date()}`);
+  console.log(`${chatId}: Sport program ended at ${new Date()}`);
 });
 
 for (const program of programs) {
@@ -32,7 +33,7 @@ for (const program of programs) {
     if (program.even === undefined || (program.even === true && isTodayEven()) || (program.even === false && !isTodayEven())) {
       const chatId = config.get("chatId");
       bot.sendMessage(chatId, toFarsiNumber(`${program.title}: ${program.text}`));
-      console.log(`Food reminder sent at ${new Date()}`);
+      console.log(`${chatId}: Food reminder sent at ${new Date()}`);
     }
   });
 }
