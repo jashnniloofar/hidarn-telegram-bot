@@ -1,16 +1,17 @@
 import * as config from "config";
-import { schedule, validate } from "node-cron";
+import { schedule } from "node-cron";
 import * as TelegramBot from "node-telegram-bot-api";
+import { programs } from "./program";
 import { sports } from "./sport";
-import { getCongratsSmile, sleep } from "./utils";
+import { getCongratsSmile, isTodayEven, sleep } from "./utils";
 
 const token = config.get("token");
-const chatId = config.get("chatId");
 process.env["NTBA_FIX_350"] = "1";
 const bot = new TelegramBot(token, { polling: true });
 
 // Matches "/sport"
 bot.onText(/\/sport(.*)/, async (msg, match) => {
+  const chatId = msg.chat.id;
   bot.sendMessage(chatId, "شروع برنامه ورزشی");
   for (const sport of sports) {
     bot.sendMessage(chatId, `${sport.time} دقیقه ${sport.title}`);
@@ -23,3 +24,12 @@ bot.onText(/\/sport(.*)/, async (msg, match) => {
   bot.sendMessage(chatId, "پایان برنامه ورزشی");
   bot.sendMessage(chatId, getCongratsSmile());
 });
+
+for (const program of programs) {
+  schedule(program.schedule, () => {
+    if (program.even === undefined || (program.even === true && isTodayEven()) || (program.even === false && !isTodayEven())) {
+      const chatId = config.get("chatId");
+      bot.sendMessage(chatId, `${program.title}: ${program.text}`);
+    }
+  });
+}
