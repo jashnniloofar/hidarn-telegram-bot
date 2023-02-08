@@ -3,7 +3,7 @@ import { schedule } from "node-cron";
 import * as TelegramBot from "node-telegram-bot-api";
 import { programs } from "./program";
 import { sports } from "./sport";
-import { getCongratsSmile, isTodayEven, sleep } from "./utils";
+import { getCongratsSmile, isTodayEven, sleep, toFarsiNumber } from "./utils";
 
 const token = config.get("token");
 process.env["NTBA_FIX_350"] = "1";
@@ -15,10 +15,10 @@ bot.onText(/\/sport(.*)/, async (msg, match) => {
   const chatId = msg.chat.id;
   bot.sendMessage(chatId, "شروع برنامه ورزشی");
   for (const sport of sports) {
-    bot.sendMessage(chatId, `${sport.time} دقیقه ${sport.title}`);
+    bot.sendMessage(chatId, toFarsiNumber(`${sport.time} دقیقه ${sport.title}`));
     await sleep(sport.time * 1000 * 60);
     if (sport.rest > 0) {
-      bot.sendMessage(chatId, `${sport.rest} دقیقه استراحت`);
+      bot.sendMessage(chatId, toFarsiNumber(`${sport.rest} دقیقه استراحت`));
       await sleep(sport.rest * 1000 * 60);
     }
   }
@@ -31,7 +31,7 @@ for (const program of programs) {
   schedule(program.schedule, () => {
     if (program.even === undefined || (program.even === true && isTodayEven()) || (program.even === false && !isTodayEven())) {
       const chatId = config.get("chatId");
-      bot.sendMessage(chatId, `${program.title}: ${program.text}`);
+      bot.sendMessage(chatId, toFarsiNumber(`${program.title}: ${program.text}`));
       console.log(`Food reminder sent at ${new Date()}`);
     }
   });

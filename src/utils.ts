@@ -7,3 +7,8 @@ export const getCongratsSmile = (): string => {
   const index = Math.floor(Math.random() * smiles.length);
   return smiles[index];
 };
+
+export const toFarsiNumber = (str: string) => {
+  const farsiDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+  return str.replace(/\d/g, (x) => farsiDigits[x]);
+};
