@@ -11,6 +11,7 @@ const bot = new TelegramBot(token, { polling: true });
 
 // Matches "/sport"
 bot.onText(/\/sport(.*)/, async (msg, match) => {
+  console.log(`Sport program started at ${new Date()}`);
   const chatId = msg.chat.id;
   bot.sendMessage(chatId, "شروع برنامه ورزشی");
   for (const sport of sports) {
@@ -23,6 +24,7 @@ bot.onText(/\/sport(.*)/, async (msg, match) => {
   }
   bot.sendMessage(chatId, "پایان برنامه ورزشی");
   bot.sendMessage(chatId, getCongratsSmile());
+  console.log(`Sport program ended at ${new Date()}`);
 });
 
 for (const program of programs) {
@@ -30,6 +32,7 @@ for (const program of programs) {
     if (program.even === undefined || (program.even === true && isTodayEven()) || (program.even === false && !isTodayEven())) {
       const chatId = config.get("chatId");
       bot.sendMessage(chatId, `${program.title}: ${program.text}`);
+      console.log(`Food reminder sent at ${new Date()}`);
     }
   });
 }
